@@ -1,0 +1,34 @@
+{
+	"name": "Load_FactPurchasing",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load_FactPurchasing",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "FactPurchasing",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-05-08T10:16:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

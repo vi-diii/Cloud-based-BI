@@ -1,0 +1,60 @@
+{
+	"name": "ds_dim_date",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ds_DimDate_DW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DateSK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FullDateAlternateKey",
+				"type": "date"
+			},
+			{
+				"name": "DayNumberOfWeek",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "DayNameOfWeek",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DayNumberOfMonth",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "MonthName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MonthNumberOfYear",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "CalendarQuarter",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "CalendarYear",
+				"type": "smallint",
+				"precision": 5
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimDate"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

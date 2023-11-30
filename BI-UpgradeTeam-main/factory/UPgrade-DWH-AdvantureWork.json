@@ -1,0 +1,14 @@
+{
+	"name": "UPgrade-DWH-AdvantureWork",
+	"properties": {
+		"globalConfigurations": {
+			"PipelineBillingEnabled": "false"
+		}
+	},
+	"location": "southeastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "54ca9597-a6ab-4880-8454-ede53c2837af",
+		"tenantId": "07acb355-56bc-489b-b98c-8fea440460e8"
+	}
+}

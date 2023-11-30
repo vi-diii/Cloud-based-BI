@@ -1,0 +1,68 @@
+{
+	"name": "ds_DimPromotion_DW",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_Destination",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PromotionKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PromotionID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DiscountPct",
+				"type": "smallmoney",
+				"precision": 10,
+				"scale": 4
+			},
+			{
+				"name": "Type",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StartDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EndDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MinQty",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MaxQty",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimPromotion"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

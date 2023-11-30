@@ -1,0 +1,64 @@
+{
+	"name": "ds_DimSalesTerritory_DW",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_Destination",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TerritoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TerritoryID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TerritoryName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CountryRegionCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TerritoryGroup",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SalesYTD",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "SalesLastYear",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "CostYTD",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "CostLastYear",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimSalesTerritory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

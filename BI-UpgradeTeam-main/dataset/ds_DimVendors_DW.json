@@ -1,0 +1,54 @@
+{
+	"name": "ds_DimVendors_DW",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_Destination",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "VendorKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VendorID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ActiveFlag",
+				"type": "bit"
+			},
+			{
+				"name": "CreditRating",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "PreferredVendorStatus",
+				"type": "bit"
+			},
+			{
+				"name": "TerritoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimVendors"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

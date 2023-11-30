@@ -1,0 +1,179 @@
+{
+	"name": "DimCustomers",
+	"properties": {
+		"activities": [
+			{
+				"name": "DimCustomers",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT\n    SC.CustomerID,\n    PP.FirstName,\n    PP.LastName,\n    PEA.EmailAddress,\n    PP.EmailPromotion,\n    Ph.PhoneNumber,\n    ST.Name AS TerritoryName,\n\tST.CountryRegionCode,\n\tSCR.Name as CountryRegionName,\n    CAST(CASE \n            WHEN SC.CustomerID NOT IN (\n                SELECT DISTINCT CustomerID \n                FROM [Sales].[SalesOrderHeader]\n            ) \n            THEN 0 \n            ELSE 1 \n         END AS BIT) AS Transaction_flag\nFROM \n    [Sales].[Customer] SC\nLEFT JOIN \n    [Person].[Person] PP ON SC.PersonID = PP.BusinessEntityID\nLEFT JOIN \n    [Person].[PersonPhone] Ph ON Ph.BusinessEntityID = PP.BusinessEntityID\nLEFT JOIN \n    [Person].[EmailAddress] PEA ON PEA.BusinessEntityID = SC.PersonID\nLEFT JOIN [Sales].[SalesTerritory] ST on ST.TerritoryID = SC.TerritoryID\nLEFT JOIN [Person].[CountryRegion] SCR ON SCR.CountryRegionCode = ST.CountryRegionCode\nLEFT JOIN [Person].[BusinessEntityAddress] BEA ON BEA.BusinessEntityID = SC.CustomerID\nORDER BY CustomerID\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "FirstName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "FirstName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "LastName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "LastName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailPromotion",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "EmailPromotion",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "PhoneNumber",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "PhoneNumber",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "TerritoryName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "TerritoryName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "CountryRegionCode",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "CountryRegionCode",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "CountryRegionName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "CountryRegionName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Transaction_flag",
+									"type": "Boolean",
+									"physicalType": "bit"
+								},
+								"sink": {
+									"name": "TransactionFlag",
+									"type": "Boolean",
+									"physicalType": "bit"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_DimCustomers_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_DimCustomers_DW",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-05-06T19:59:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

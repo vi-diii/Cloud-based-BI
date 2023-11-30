@@ -1,0 +1,13 @@
+{
+	"name": "ds_DimSalesTerritory_Source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DB_Source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

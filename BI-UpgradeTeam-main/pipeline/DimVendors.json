@@ -1,0 +1,155 @@
+{
+	"name": "DimVendors",
+	"properties": {
+		"activities": [
+			{
+				"name": "DimVendors",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select PV.BusinessEntityID AS VendorID, PV.Name as VendorName, PV.ActiveFlag, PV.CreditRating, \nPV.PreferredVendorStatus,\nSP.CountryRegionCode, CR.Name as CountryRegionName, PA.City\nfrom [Purchasing].[Vendor] PV\nJOIN [Person].[BusinessEntity] PB\nON PV.BusinessEntityID=PB.BusinessEntityID\nJOIN [Person].[BusinessEntityAddress] BEA\nON BEA.BusinessEntityID = PV.BusinessEntityID\nJOIN [Person].[Address] PA\nON PA.AddressID = BEA.AddressID\nJOIN [Person].[StateProvince] SP\nON SP.StateProvinceID = PA.StateProvinceID\nJOIN [Person].[CountryRegion] CR\nON CR.CountryRegionCode = SP.CountryRegionCode\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "VendorID",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "VendorID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "VendorName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ActiveFlag",
+									"type": "Boolean",
+									"physicalType": "bit"
+								},
+								"sink": {
+									"name": "ActiveFlag",
+									"type": "Boolean",
+									"physicalType": "bit"
+								}
+							},
+							{
+								"source": {
+									"name": "CreditRating",
+									"type": "Byte",
+									"physicalType": "tinyint"
+								},
+								"sink": {
+									"name": "CreditRating",
+									"type": "Byte",
+									"physicalType": "tinyint"
+								}
+							},
+							{
+								"source": {
+									"name": "PreferredVendorStatus",
+									"type": "Boolean",
+									"physicalType": "bit"
+								},
+								"sink": {
+									"name": "PreferredVendorStatus",
+									"type": "Boolean",
+									"physicalType": "bit"
+								}
+							},
+							{
+								"source": {
+									"name": "CountryRegionCode",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "CountryRegionCode",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "CountryRegionName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "CountryRegionName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_DimVendors_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_DimVendors_DW",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-05-06T20:18:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

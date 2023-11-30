@@ -1,0 +1,259 @@
+{
+	"name": "FactPurchasing",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "ls_Source_DB",
+						"type": "LinkedServiceReference"
+					},
+					"name": "datasource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimVendors_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimVendors"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimShipingMethod_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimShipingMethod"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimEmployee_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimEmployee"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_dim_date",
+						"type": "DatasetReference"
+					},
+					"name": "DimDate"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimProducts_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimProduct"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_FactPurchasingNew_DW",
+						"type": "DatasetReference"
+					},
+					"name": "FactPurchasing"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SelectDimVendors"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "lookup3"
+				},
+				{
+					"name": "lookup4"
+				},
+				{
+					"name": "lookup5"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PurchaseOrderKey as integer,",
+				"          EmployeeKey as integer,",
+				"          VendorKey as integer,",
+				"          ShipMethodKey as integer,",
+				"          ProductKey as integer,",
+				"          UnitPrice as decimal(19,4),",
+				"          OrderQty as short,",
+				"          ReceivedQty as decimal(8,2),",
+				"          RejectedQty as decimal(8,2),",
+				"          StockedQty as decimal(9,2),",
+				"          AverageLeadTime as integer,",
+				"          DateKey as date,",
+				"          LastReceiptCost as decimal(19,4),",
+				"          StandardPrice as decimal(19,4),",
+				"          MinOrderQty as integer,",
+				"          MaxOrderQty as integer,",
+				"          OrderDate as timestamp,",
+				"          ShipDate as timestamp,",
+				"          Status as integer,",
+				"          TaxAmt as decimal(19,4),",
+				"          TotalDue as decimal(19,4),",
+				"          Freight as decimal(19,4)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'SELECT POH.PurchaseOrderID as PurchaseOrderKey, POH.EmployeeID AS EmployeeKey,\\nPOH.VendorID as VendorKey, POH.ShipMethodID as ShipMethodKey,\\nOD.ProductID as ProductKey, od.UnitPrice, OD.OrderQty, OD.ReceivedQty, OD.RejectedQty, od.StockedQty,\\nPV.AverageLeadTime, -- THỜI TB NHẬN ĐƯỢC HÀNG\\nconvert(date,PV.LastReceiptDate,2) as DateKey,\\nPV.LastReceiptCost, PV.StandardPrice, PV.MinOrderQty, PV.MaxOrderQty\\n,POH.OrderDate, POH.ShipDate, POH.Status,\\nPOH.TaxAmt, POH.TotalDue, POH.Freight\\nFROM [Purchasing].[PurchaseOrderHeader] POH\\nJOIN [Purchasing].[PurchaseOrderDetail] OD\\nON POH.PurchaseOrderID = OD.PurchaseOrderID\\nJOIN [Purchasing].[Vendor] V\\nON V.BusinessEntityID = POH.VendorID\\nJOIN [Purchasing].[ProductVendor] PV\\nON PV.BusinessEntityID = V.BusinessEntityID',",
+				"     isolationLevel: 'READ_COMMITTED') ~> datasource",
+				"source(output(",
+				"          VendorKey as integer,",
+				"          VendorID as integer,",
+				"          Name as string,",
+				"          ActiveFlag as boolean,",
+				"          CreditRating as integer,",
+				"          PreferredVendorStatus as boolean,",
+				"          TerritoryKey as integer,",
+				"          City as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimVendors",
+				"source(output(",
+				"          ShipMethodKey as integer,",
+				"          ShipMethodID as integer,",
+				"          Name as string,",
+				"          ShipBase as decimal(19,4),",
+				"          ShipRate as decimal(19,4)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimShipingMethod",
+				"source(output(",
+				"          EmployeeKey as integer,",
+				"          EmployeeID as integer,",
+				"          NationalIDNumber as string,",
+				"          LoginID as string,",
+				"          JobTitle as string,",
+				"          BirthDate as date,",
+				"          Gender as string,",
+				"          CurrentFlag as boolean,",
+				"          HireDate as date,",
+				"          SalariedFlag as boolean,",
+				"          VacationHours as integer,",
+				"          SickLeaveHours as integer,",
+				"          TerritoryKey as integer,",
+				"          SalesPersonFlag as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimEmployee",
+				"source(output(",
+				"          DateSK as integer,",
+				"          FullDateAlternateKey as date,",
+				"          DayNumberOfWeek as integer,",
+				"          DayNameOfWeek as string,",
+				"          DayNumberOfMonth as integer,",
+				"          MonthName as string,",
+				"          MonthNumberOfYear as integer,",
+				"          CalendarQuarter as integer,",
+				"          CalendarYear as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimDate",
+				"source(output(",
+				"          ProductKey as integer,",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          FinishedGoodsFlag as boolean,",
+				"          Color as string,",
+				"          SafetyStockLevel as integer,",
+				"          ReorderPoint as integer,",
+				"          StandardCost as decimal(19,4),",
+				"          ListPrice as decimal(19,4),",
+				"          Size as string,",
+				"          Weight as decimal(8,2),",
+				"          DaysToManufacture as integer,",
+				"          ProductLine as string,",
+				"          Class as string,",
+				"          Style as string,",
+				"          ProductSubcategoryName as string,",
+				"          ProductCategoryName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimProduct",
+				"DimVendors select(mapColumn(",
+				"          VendorKey,",
+				"          VendorID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectDimVendors",
+				"datasource, SelectDimVendors lookup(datasource@VendorKey == VendorID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, DimShipingMethod lookup(datasource@ShipMethodKey == ShipMethodID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup5, DimEmployee lookup(datasource@EmployeeKey == EmployeeID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup3",
+				"lookup3, DimDate lookup(DateKey == FullDateAlternateKey,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup4",
+				"lookup2, DimProduct lookup(datasource@ProductKey == ProductID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup5",
+				"lookup4 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PurchaseKey as integer,",
+				"          DateTimeKey as integer,",
+				"          PurchaseOrderKey as integer,",
+				"          EmployeeKey as integer,",
+				"          VendorKey as integer,",
+				"          ShipMethodKey as integer,",
+				"          ProductKey as integer,",
+				"          UnitPrice as decimal(19,4),",
+				"          OrderQty as integer,",
+				"          ReceivedQty as decimal(8,2),",
+				"          RejectedQty as decimal(8,2),",
+				"          AverageLeadTime as integer,",
+				"          LastReceiptDate as timestamp,",
+				"          LastReceiptCost as decimal(19,4),",
+				"          StandardPrice as decimal(19,4),",
+				"          MinOrderQty as integer,",
+				"          MaxOrderQty as integer,",
+				"          OrderDate as timestamp,",
+				"          ShipDate as timestamp,",
+				"          Status as integer,",
+				"          TaxAmt as decimal(19,4),",
+				"          Freight as decimal(19,4),",
+				"          TotalDue as decimal(19,4),",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> FactPurchasing"
+			]
+		}
+	}
+}

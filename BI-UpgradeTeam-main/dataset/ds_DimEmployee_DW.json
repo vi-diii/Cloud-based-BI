@@ -1,0 +1,79 @@
+{
+	"name": "ds_DimEmployee_DW",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_Destination",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EmployeeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EmployeeID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "NationalIDNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LoginID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "JobTitle",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BirthDate",
+				"type": "date"
+			},
+			{
+				"name": "Gender",
+				"type": "nchar"
+			},
+			{
+				"name": "CurrentFlag",
+				"type": "bit"
+			},
+			{
+				"name": "HireDate",
+				"type": "date"
+			},
+			{
+				"name": "SalariedFlag",
+				"type": "bit"
+			},
+			{
+				"name": "VacationHours",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "SickLeaveHours",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "TerritoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesPersonFlag",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimEmployee"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

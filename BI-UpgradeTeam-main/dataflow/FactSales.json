@@ -1,0 +1,340 @@
+{
+	"name": "FactSales",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "DB_Source",
+						"type": "LinkedServiceReference"
+					},
+					"name": "FactSalesSourceDB"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimPromotion_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimPromotion"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimCustomers_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimCustomer"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimProducts_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimProduct"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimEmployee_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimEmployee"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimShipingMethod_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimShipingMethod"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_DimSalesTerritory_DW",
+						"type": "DatasetReference"
+					},
+					"name": "DimSaleterritory"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_dim_date",
+						"type": "DatasetReference"
+					},
+					"name": "DimDate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_FactSales_DW",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "lookup3"
+				},
+				{
+					"name": "lookup4"
+				},
+				{
+					"name": "lookup5"
+				},
+				{
+					"name": "lookup6"
+				},
+				{
+					"name": "lookup7"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SalesOrderKey as integer,",
+				"          ProductID as integer,",
+				"          CustomerID as integer,",
+				"          SalesPersonID as integer,",
+				"          TerritoryID as integer,",
+				"          ShipMethodID as integer,",
+				"          SpecialOfferID as integer,",
+				"          DateSK as date,",
+				"          DueDate as timestamp,",
+				"          ShipDate as timestamp,",
+				"          Status as integer,",
+				"          OnlineOrderFlag as boolean,",
+				"          Freight as decimal(19,4),",
+				"          TaxAmt as decimal(19,4),",
+				"          OrderQty as short,",
+				"          UnitPriceDiscount as decimal(19,4),",
+				"          SubTotal as decimal(19,4),",
+				"          TotalPaid as decimal(19,4)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'select [Sales].[SalesOrderHeader].SalesOrderID as SalesOrderKey\\n, [Sales].[SalesOrderDetail].ProductID\\n, CustomerID\\n, SalesPersonID --=EMPkey\\n, TerritoryID\\n, ShipMethodID\\n, [Sales].[SpecialOfferProduct].SpecialOfferID\\n, convert (date, OrderDate,2) as DateSK\\n, DueDate\\n, ShipDate\\n, Status \\n, OnlineOrderFlag\\n, Freight\\n, TaxAmt\\n, [Sales].[SalesOrderDetail].OrderQty\\n,[Sales].[SalesOrderDetail].[UnitPriceDiscount]\\n, [Sales].[SalesOrderHeader].SubTotal\\n, TotalDue as TotalPaid\\nfrom [Sales].[SalesOrderHeader]\\ninner join [Sales].[SalesOrderDetail]\\non [Sales].[SalesOrderDetail].SalesOrderID = [Sales].[SalesOrderHeader].SalesOrderID\\ninner join [Sales].[SpecialOfferProduct]\\non [Sales].[SpecialOfferProduct].ProductID = [Sales].[SalesOrderDetail].ProductID',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> FactSalesSourceDB",
+				"source(output(",
+				"          PromotionKey as integer,",
+				"          PromotionID as integer,",
+				"          Description as string,",
+				"          DiscountPct as decimal(10,4),",
+				"          Type as string,",
+				"          Category as string,",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp,",
+				"          MinQty as integer,",
+				"          MaxQty as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimPromotion",
+				"source(output(",
+				"          CustomerKey as integer,",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          EmailAddress as string,",
+				"          EmailPromotion as integer,",
+				"          PhoneNumber as string,",
+				"          TerritoryKey as integer,",
+				"          TransactionFlag as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimCustomer",
+				"source(output(",
+				"          ProductKey as integer,",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          FinishedGoodsFlag as boolean,",
+				"          Color as string,",
+				"          SafetyStockLevel as integer,",
+				"          ReorderPoint as integer,",
+				"          StandardCost as decimal(19,4),",
+				"          ListPrice as decimal(19,4),",
+				"          Size as string,",
+				"          Weight as decimal(8,2),",
+				"          DaysToManufacture as integer,",
+				"          ProductLine as string,",
+				"          Class as string,",
+				"          Style as string,",
+				"          ProductSubcategoryName as string,",
+				"          ProductCategoryName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimProduct",
+				"source(output(",
+				"          EmployeeKey as integer,",
+				"          EmployeeID as integer,",
+				"          NationalIDNumber as string,",
+				"          LoginID as string,",
+				"          JobTitle as string,",
+				"          BirthDate as date,",
+				"          Gender as string,",
+				"          CurrentFlag as boolean,",
+				"          HireDate as date,",
+				"          SalariedFlag as boolean,",
+				"          VacationHours as integer,",
+				"          SickLeaveHours as integer,",
+				"          TerritoryKey as integer,",
+				"          SalesPersonFlag as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimEmployee",
+				"source(output(",
+				"          ShipMethodKey as integer,",
+				"          ShipMethodID as integer,",
+				"          Name as string,",
+				"          ShipBase as decimal(19,4),",
+				"          ShipRate as decimal(19,4)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimShipingMethod",
+				"source(output(",
+				"          TerritoryKey as integer,",
+				"          TerritoryID as integer,",
+				"          TerritoryName as string,",
+				"          CountryRegionCode as string,",
+				"          TerritoryGroup as string,",
+				"          SalesYTD as decimal(19,4),",
+				"          SalesLastYear as decimal(19,4),",
+				"          CostYTD as decimal(19,4),",
+				"          CostLastYear as decimal(19,4)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimSaleterritory",
+				"source(output(",
+				"          DateSK as integer,",
+				"          FullDateAlternateKey as date,",
+				"          DayNumberOfWeek as integer,",
+				"          DayNameOfWeek as string,",
+				"          DayNumberOfMonth as integer,",
+				"          MonthName as string,",
+				"          MonthNumberOfYear as integer,",
+				"          CalendarQuarter as integer,",
+				"          CalendarYear as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DimDate",
+				"FactSalesSourceDB, select1 lookup(SpecialOfferID == PromotionID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, select2 lookup(FactSalesSourceDB@CustomerID == select2@CustomerID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2, DimProduct lookup(FactSalesSourceDB@ProductID == DimProduct@ProductID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup3",
+				"lookup3, DimEmployee lookup(SalesPersonID == EmployeeID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup4",
+				"lookup4, DimShipingMethod lookup(FactSalesSourceDB@ShipMethodID == DimShipingMethod@ShipMethodID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup5",
+				"lookup5, DimSaleterritory lookup(FactSalesSourceDB@TerritoryID == DimSaleterritory@TerritoryID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup6",
+				"lookup6, DimDate lookup(FactSalesSourceDB@DateSK == FullDateAlternateKey,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup7",
+				"DimPromotion select(mapColumn(",
+				"          PromotionKey,",
+				"          PromotionID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"DimCustomer select(mapColumn(",
+				"          CustomerKey,",
+				"          CustomerID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"lookup7 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SalesKey as integer,",
+				"          OrderKey as integer,",
+				"          ProductKey as integer,",
+				"          CustomerKey as integer,",
+				"          SalesPersonKey as integer,",
+				"          TerritoryKey as integer,",
+				"          ShipMethodKey as integer,",
+				"          PromotionKey as integer,",
+				"          DateKey as date,",
+				"          DueDate as timestamp,",
+				"          ShipDate as timestamp,",
+				"          Status as integer,",
+				"          OnlineOrderFlag as boolean,",
+				"          Freight as decimal(19,4),",
+				"          TaxAmt as decimal(19,4),",
+				"          OrderQty as integer,",
+				"          UnitPriceDiscount as decimal(19,4),",
+				"          TotalProductCost as decimal(19,4),",
+				"          TotalPaid as decimal(19,4),",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          OrderKey = SalesOrderKey,",
+				"          ProductKey,",
+				"          CustomerKey,",
+				"          SalesPersonKey = EmployeeKey,",
+				"          TerritoryKey = DimSaleterritory@TerritoryKey,",
+				"          ShipMethodKey,",
+				"          PromotionKey,",
+				"          DateKey = FullDateAlternateKey,",
+				"          DueDate,",
+				"          ShipDate,",
+				"          Status,",
+				"          OnlineOrderFlag,",
+				"          Freight,",
+				"          TaxAmt,",
+				"          OrderQty,",
+				"          UnitPriceDiscount,",
+				"          TotalProductCost = SubTotal,",
+				"          TotalPaid",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
